@@ -1,98 +1,127 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# URL Shortener
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready URL shortening backend built with NestJS and TypeScript. Supports user authentication, per-user short URL ownership, click tracking, and rate-limited API endpoints.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Overview
 
-## Description
+Long URLs are hard to share. This backend service lets authenticated users shorten any URL into a compact code, share it, and track how many times it gets clicked — all through a clean REST API.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Architecture
 
-## Project setup
-
-```bash
-$ pnpm install
+```
+Client (Postman / Browser)
+        │
+        ▼
+JWT Auth Guard → Rate Limiter → URLs Controller
+                                      │
+                          ┌───────────┴───────────┐
+                          ▼                       ▼
+                     URLs Service         Analytics Service
+                          │                       │
+                          └───────────┬───────────┘
+                                      ▼
+                               PostgreSQL Database
 ```
 
-## Compile and run the project
+## Key Features
 
+- **URL shortening** — generate a unique short code for any long URL
+- **Redirect** — visiting a short code redirects to the original URL instantly
+- **Click analytics** — every visit is recorded and counted
+- **User authentication** — register and login with JWT
+- **Per-user ownership** — users can only manage their own short URLs
+- **Rate limiting** — prevents abuse on URL creation endpoints
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | NestJS (TypeScript) |
+| Database | PostgreSQL |
+| ORM | TypeORM |
+| Authentication | JWT |
+| Rate Limiting | @nestjs/throttler |
+
+## Modules
+
+| Module | Responsibility |
+|---|---|
+| `auth` | Register, login, issue and validate JWT tokens |
+| `users` | User entity and user lookup |
+| `urls` | Create short URLs, redirect, list user's URLs |
+| `analytics` | Record clicks, serve click stats per short URL |
+
+## API Endpoints
+
+### Authentication
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/auth/register` | Create a new account |
+| POST | `/auth/login` | Login and receive a JWT |
+
+### URL Management
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| POST | `/urls` | JWT | Create a new short URL |
+| GET | `/urls` | JWT | List all URLs owned by the current user |
+| DELETE | `/urls/:code` | JWT | Delete a short URL |
+
+### Redirect
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/:code` | Redirect to the original URL |
+
+### Analytics
+| Method | Endpoint | Auth | Description |
+|---|---|---|---|
+| GET | `/urls/:code/stats` | JWT | Get click stats for a short URL |
+
+## Getting Started
+
+### Prerequisites
+- Node.js v18+
+- PostgreSQL
+- pnpm
+
+### Installation
 ```bash
-# development
-$ pnpm run start
+# Clone the repository
+git clone https://github.com/your-username/url-shortener.git
+cd url-shortener
 
-# watch mode
-$ pnpm run start:dev
+# Install dependencies
+pnpm install
 
-# production mode
-$ pnpm run start:prod
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your database credentials and JWT secret
+
+# Start in development mode
+pnpm start:dev
 ```
 
-## Run tests
+### Environment Variables
+```env
+PORT=3000
+NODE_ENV=development
 
-```bash
-# unit tests
-$ pnpm run test
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=yourpassword
+DB_NAME=url_shortener
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+JWT_SECRET=your_secret_key
+JWT_EXPIRES_IN=7d
 ```
 
-## Deployment
+## Project Status
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+🚧 Active development — building phase by phase.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [x] Project setup and database connection
+- [ ] Users module and JWT authentication
+- [ ] URLs module — create, redirect, list
+- [ ] Analytics module — click tracking and stats
+- [ ] Rate limiting and validation
+- [ ] Global error handling and polish
