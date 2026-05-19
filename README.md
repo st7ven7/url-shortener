@@ -120,7 +120,7 @@ JWT_EXPIRES_IN=7d
 🚧 Active development — building phase by phase.
 
 - [x] Project setup and database connection
-- [ ] Users module and JWT authentication
+- [x] Users module and JWT authentication
 - [ ] URLs module — create, redirect, list
 - [ ] Analytics module — click tracking and stats
 - [ ] Rate limiting and validation
