@@ -1,14 +1,18 @@
 import { Controller, Post, Get, Delete, Body, Param, Redirect, UseGuards, Req, } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { UrlsService } from './urls.service';
+import { AnalyticsService } from 'src/analytics/analytics.service';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import type{ Request } from 'express';
+import type { Request } from 'express';
 
 @ApiTags('URLs')
 @Controller()
 export class UrlsController {
-  constructor(private readonly urlsService: UrlsService) {}
+  constructor(
+    private readonly urlsService: UrlsService,
+    private readonly analyticsService: AnalyticsService,
+  ) {}
 
   @ApiBearerAuth()
 
@@ -57,9 +61,15 @@ export class UrlsController {
 
   @Get(':code')
   @Redirect()
-  async redirect(@Param('code') code: string) {
+  async redirect(@Param('code') code: string, @Req() req:Request) {
     const shortUrl = await this.urlsService.findByCode(code);
+
+    const ipAddress = req.ip;
+
+    await this.analyticsService.recordClick(shortUrl, ipAddress);
+
     await this.urlsService.incrementClickCount(shortUrl);
+
     return { url: shortUrl.originalUrl, statusCode: 302 };
   }
 }

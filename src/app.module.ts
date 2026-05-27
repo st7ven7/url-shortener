@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { validationSchema } from './config/validation';
 import { UrlsModule } from './urls/urls.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -34,6 +35,8 @@ import { UrlsModule } from './urls/urls.module';
     AuthModule,
 
     UrlsModule,
+
+    AnalyticsModule,
   ],
 })
 export class AppModule {}
