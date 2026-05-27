@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { ShortUrl } from './short-url.entity';
@@ -10,7 +10,7 @@ import { AnalyticsModule } from 'src/analytics/analytics.module';
   imports: [
     TypeOrmModule.forFeature([ShortUrl]),
     ConfigModule,
-    AnalyticsModule,
+    forwardRef(() => AnalyticsModule),
   ],
   controllers: [UrlsController],
   providers: [UrlsService],

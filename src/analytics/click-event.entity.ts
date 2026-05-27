@@ -13,7 +13,7 @@ export class ClickEvent {
   @Column()
   shortUrlId!: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   ipAddress!: string | null;
 
   @CreateDateColumn()

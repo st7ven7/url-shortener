@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnalyticsController } from './analytics.controller';
 import { AnalyticsService } from './analytics.service';
@@ -8,8 +8,7 @@ import { UrlsModule } from 'src/urls/urls.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ClickEvent]),
-
-    UrlsModule,
+    forwardRef(() => UrlsModule),
   ],
   controllers: [AnalyticsController],
   providers: [AnalyticsService],
