@@ -122,6 +122,6 @@ JWT_EXPIRES_IN=7d
 - [x] Project setup and database connection
 - [x] Users module and JWT authentication
 - [x] URLs module — create, redirect, list
-- [ ] Analytics module — click tracking and stats
+- [x] Analytics module — click tracking and stats
 - [ ] Rate limiting and validation
 - [ ] Global error handling and polish
