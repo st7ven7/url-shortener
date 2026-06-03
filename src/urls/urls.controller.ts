@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Delete, Body, Param, Redirect, UseGuards, Req, } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { UrlsService } from './urls.service';
 import { AnalyticsService } from 'src/analytics/analytics.service';
 import { CreateUrlDto } from './dto/create-url.dto';
@@ -20,7 +21,7 @@ export class UrlsController {
   @ApiResponse({ status: 201, description: 'Short URL created successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ThrottlerGuard)
   @Post('urls')
   create(@Body() dto: CreateUrlDto, @Req() req: Request) {
     const userId = (req.user as { id: string }).id;

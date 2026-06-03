@@ -6,13 +6,14 @@ import { AuthModule } from './auth/auth.module';
 import { validationSchema } from './config/validation';
 import { UrlsModule } from './urls/urls.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
 
     ConfigModule.forRoot({
       isGlobal: true, 
-      validationSchema
+      validationSchema,
     }),
 
     TypeOrmModule.forRootAsync({
@@ -29,6 +30,13 @@ import { AnalyticsModule } from './analytics/analytics.module';
         synchronize: true,
       }),
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 60000,
+        limit: 10,
+      }
+    ]),
 
     UsersModule,
 
