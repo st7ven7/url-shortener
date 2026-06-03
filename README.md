@@ -123,5 +123,5 @@ JWT_EXPIRES_IN=7d
 - [x] Users module and JWT authentication
 - [x] URLs module — create, redirect, list
 - [x] Analytics module — click tracking and stats
-- [ ] Rate limiting and validation
-- [ ] Global error handling and polish
+- [x] Rate limiting and validation
+- [x] Global error handling and polish
