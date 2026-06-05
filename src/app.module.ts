@@ -7,6 +7,7 @@ import { validationSchema } from './config/validation';
 import { UrlsModule } from './urls/urls.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -51,5 +52,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
     AnalyticsModule,
   ],
+
+  controllers:[AppController],
 })
 export class AppModule {}
